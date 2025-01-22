@@ -1,12 +1,22 @@
-const hapi = require("@hapi/hapi");
+const Hapi = require("@hapi/hapi");
+const routes = require("./api/route.js");
+require("dotenv").config();
 
-const init = async () => {
-  const server = hapi.server({
-    port: process.env.PORT,
-    host: process.env.HOST,
+const start = async () => {
+  const server = Hapi.server({
+    port: process.env.PORT || 3000,
+    host: process.env.HOST || "localhost",
   });
 
-  await server.start();
+  server.route(routes);
+
+  try {
+    await server.start();
+    console.log("Server running on %s", server.info.uri);
+  } catch (err) {
+    console.log(err);
+    process.exit(1);
+  }
 };
 
-init();
+start();
