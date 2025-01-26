@@ -6,12 +6,6 @@ const InvariantError = require("../../exceptions/InvariantError");
 class SongService {
   constructor() {
     this.pool = new Pool();
-
-    this.addSong = this.addSong.bind(this);
-    this.deleteSong = this.deleteSong.bind(this);
-    this.editSong = this.editSong.bind(this);
-    this.getSongById = this.getSongById.bind(this);
-    this.getSongs = this.getSongs.bind(this);
   }
 
   async addSong({ title, genre, performer, duration, albumId }) {
