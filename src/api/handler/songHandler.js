@@ -1,29 +1,28 @@
-class AlbumHandler {
+class SongHandler {
   constructor(service, validator) {
     this.service = service;
     this.validator = validator;
 
-    this.addAlbum = this.addAlbum.bind(this);
-    this.deleteAlbum = this.deleteAlbum.bind(this);
-    this.editAlbum = this.editAlbum.bind(this);
-    this.getAlbums = this.getAlbums.bind(this);
-    this.getAlbumById = this.getAlbumById.bind(this);
+    this.addSong = this.addSong.bind(this);
+    this.deleteSong = this.deleteSong.bind(this);
+    this.editSong = this.editSong.bind(this);
+    this.getSongById = this.getSongById.bind(this);
+    this.getSongs = this.getSongs.bind(this);
   }
 
-  async addAlbum(request, h) {
+  async addSong(request, h) {
     try {
-      this.validator.ValidateAlbumPayload(request.payload);
+      this.validator.SongValidatePayload(request.payload);
+      const songId = await this.service.addSong(request.payload);
 
-      const album_id = await this.service.addAlbum(request.payload);
-
-      const response = h.response({
-        status: "success",
-        data: {
-          album_id: album_id,
-        },
-      });
-      response.code(201);
-      return response;
+      return h
+        .response({
+          status: `success`,
+          data: {
+            songId,
+          },
+        })
+        .code(201);
     } catch (err) {
       if (err.name == `InvariantError`) {
         const response = h.response({
@@ -42,27 +41,29 @@ class AlbumHandler {
     }
   }
 
-  async getAlbums(_, h) {
-    const albums = await this.service.getAlbums();
+  async getSongs(_, h) {
+    const songs = await this.service.getSongs();
 
     return h
       .response({
-        status: "success",
-        data: { albums },
+        status: `success`,
+        data: {
+          songs: songs,
+        },
       })
       .code(200);
   }
 
-  async getAlbumById(request, h) {
+  async getSongById(request, h) {
     try {
       const { id } = request.params;
-      const album = await this.service.getAlbumById(id);
+      const song = await this.service.getSongById(id);
 
       return h
         .response({
           status: `success`,
           data: {
-            album: album,
+            song: song,
           },
         })
         .code(200);
@@ -84,15 +85,20 @@ class AlbumHandler {
     }
   }
 
-  async deleteAlbum(request, h) {
+  async editSong(request, h) {
     try {
+      this.validator.SongValidatePayload(request.payload);
       const { id } = request.params;
-      await this.service.deleteAlbumById(id);
+
+      const songId = await this.service.editSong(id, request.payload);
 
       return h
         .response({
           status: `success`,
-          message: `succesfully remove target album`,
+          message: `Song has been updated`,
+          data: {
+            songId,
+          },
         })
         .code(200);
     } catch (err) {
@@ -113,19 +119,16 @@ class AlbumHandler {
     }
   }
 
-  async editAlbum(request, h) {
+  async deleteSong(request, h) {
     try {
       const { id } = request.params;
-      this.validator.ValidateAlbumPayload(request.payload);
-      const result = await this.service.editAlbumById(id, request.payload);
+
+      await this.service.deleteSong(id);
 
       return h
         .response({
           status: `success`,
-          message: `Album has been edited`,
-          body: {
-            data: result,
-          },
+          message: `Song has been deleted`,
         })
         .code(200);
     } catch (err) {
@@ -147,4 +150,4 @@ class AlbumHandler {
   }
 }
 
-module.exports = AlbumHandler;
+module.exports = SongHandler;

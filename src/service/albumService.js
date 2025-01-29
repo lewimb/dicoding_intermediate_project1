@@ -1,7 +1,6 @@
 const { Pool } = require("pg");
 const { nanoid } = require("nanoid");
 const NotFoundError = require("../exceptions/NotFoundError");
-const InvariantError = require("../exceptions/InvariantError");
 
 class AlbumService {
   constructor() {
@@ -20,9 +19,9 @@ class AlbumService {
 
     const result = await this.pool.query(query);
 
-    if (!result.rows[0].id) {
-      throw new InvariantError("Album gagal ditambahkan");
-    }
+    // if (!result.rows[0].id) {
+    //   throw new InvariantError("Album gagal ditambahkan");
+    // }
 
     return result.rows[0]?.id;
   }
@@ -69,7 +68,7 @@ class AlbumService {
     return result;
   }
 
-  async deleteAlbumsById(id) {
+  async deleteAlbumById(id) {
     const query = {
       text: `DELETE FROM albums WHERE id=$1 RETURNING id`,
       values: [id],
@@ -81,7 +80,7 @@ class AlbumService {
       throw new NotFoundError("Album tidak ditemukan");
     }
 
-    return result.rows[0]?.id;
+    return;
   }
 }
 

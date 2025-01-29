@@ -1,7 +1,6 @@
 const { Pool } = require("pg");
 const { nanoid } = require("nanoid");
-const NotFoundError = require("../exceptions/NotFoundError");
-const InvariantError = require("../exceptions/InvariantError");
+const NotFoundError = require("../exceptions/NotFoundError.js");
 
 class SongService {
   constructor() {
@@ -29,9 +28,9 @@ class SongService {
 
     const result = await this.pool.query(query);
 
-    if (!result.rows[0].id) {
-      throw new InvariantError("Catatan gagal ditambahkan");
-    }
+    // if (!result.rows[0].id) {
+    //   throw new InvariantError("Catatan gagal ditambahkan");
+    // }
 
     return result.rows[0]?.id;
   }
@@ -98,7 +97,7 @@ class SongService {
     if (!result.rows.length) {
       throw new NotFoundError("lagu tidak ditemukan");
     }
-    return result.rows[0]?.id;
+    return;
   }
 }
 
